@@ -3,13 +3,13 @@
 This is the ANYmal **D** version of the ANYmal C PPO project. The three training
 scripts are direct ports of the ANYmal C set, with two kinds of change only:
 
-1. **C → D.** They load the ANYmal D model (`anybotics_anymal_d/scene.xml`) and
+1. **ANYmal D.** They load the ANYmal D model (`anybotics_anymal_d/scene.xml`) and
    save to `pretrained_models/anymal_d/`. The robot's kinematics are identical
    between C and D (12 leg joints, 19-dim `qpos`, 18-dim `qvel`), so the network
    sizes, action mapping, and reward logic are unchanged. The standing pose and
    height target are read from the model's `home` keyframe, so they track the D
    XML automatically.
-2. **wandb → Hugging Face.** All experiment tracking now uses the Hugging Face
+2. **Hugging Face.** All experiment tracking now uses the Hugging Face
    stack instead of Weights & Biases (see "What changed" below).
 
 ## Layout
