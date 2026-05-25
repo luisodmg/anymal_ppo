@@ -1,4 +1,4 @@
-# PPO for ANYmal D (MuJoCo) — Hugging Face edition
+# PPO for ANYmal D (MuJoCo) — Hugging Face
 
 This is the ANYmal **D** version of the ANYmal C PPO project. The three training
 scripts are direct ports of the ANYmal C set, with two kinds of change only:
