@@ -57,17 +57,8 @@ python anymal_d/RL_PPO_ANYMAL_D_VIDEO.py --num-videos 5
 The video script pairs with trainer **1** (same MultivariateNormal policy class).
 Trainer **2** renders its own videos via its `render` mode.
 
-## What changed (wandb → Hugging Face)
 
-| Old (wandb) | New (Hugging Face) |
-|---|---|
-| `import wandb` | `import trackio as wandb` — [Trackio](https://huggingface.co/docs/trackio) is a drop-in, wandb-compatible tracker (`init`/`log`/`finish`, `Video`, `Image`). Runs locally; can sync a free dashboard to a HF Space. |
-| `wandb.log(..., wandb.Video/Image)` | identical calls on `trackio`. The matplotlib reward plot is saved to PNG and logged as `wandb.Image` (trackio logs media objects, not the raw `pyplot` module). |
-| `wandb.save(checkpoint)` | `push_checkpoint_to_hub()` → uploads to a HF Hub **model repo** via `huggingface_hub`. |
-| `wandb.sweep` + `wandb.agent` | `run_sweep()` — a self-contained random-search driver over the same `sweep_configuration` ranges (Trackio has no sweep agent). Each trial is its own Trackio run; the best trial is reported at the end. |
-| `wandb.login()` | removed — Trackio is local-first. Authenticate only if you push to the Hub or a Space (`hf auth login` or `HF_TOKEN`). |
-
-### Optional environment variables
+## Optional environment variables
 
 Everything runs **fully offline** without these. Set them to enable the cloud bits:
 
