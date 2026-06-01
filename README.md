@@ -10,7 +10,8 @@ scripts are direct ports of the ANYmal C set, with two kinds of change only:
    height target are read from the model's `home` keyframe, so they track the D
    XML automatically.
 2. **Hugging Face.** All experiment tracking now uses the Hugging Face
-   stack instead of Weights & Biases (see "What changed" below).
+  stack instead of Weights & Biases, and the scripts can upload checkpoints,
+  rollout videos, reward plots, and metadata to a Hugging Face model repo.
 
 ## Layout
 
@@ -21,7 +22,7 @@ anymal_d_ppo/
 │   ├── RL_PPO_ANYMAL_D_SWEEP_OR_TRAIN_RENDERING.py# Normal/delta trainer + sweep + render
 │   └── RL_PPO_ANYMAL_D_VIDEO.py                   # render videos from a checkpoint
 ├── anybotics_anymal_d/                        # the MuJoCo model (scene.xml, assets, …)
-├── pretrained_models/anymal_d/                # checkpoints + videos land here
+├── pretrained_models/anymal_d/                # checkpoints, videos, metadata
 ├── requirements.txt
 └── README.md
 ```
@@ -36,7 +37,7 @@ pip install -r requirements.txt
 # headless rendering (Linux): apt-get install libosmesa6 && pip install PyOpenGL
 ```
 
-## Run
+## Train And Export
 
 ```bash
 # 1) Older trainer (MultivariateNormal policy, raw-action control)
@@ -54,19 +55,37 @@ python anymal_d/RL_PPO_ANYMAL_D_VIDEO.py --num-videos 5
 # headless: prefix any of the above with  MUJOCO_GL=osmesa
 ```
 
-The video script pairs with trainer **1** (same MultivariateNormal policy class).
-Trainer **2** renders its own videos via its `render` mode.
+Trainer **1** pairs with the video script because they share the same
+`MultivariateNormal` policy class. Trainer **2** renders its own videos via its
+`render` mode.
+
+When a run crosses the save threshold, the scripts write local artifacts under
+`pretrained_models/anymal_d/` and a matching metadata JSON file. If
+`HF_MODEL_REPO` is set, those files are uploaded to the Hub with the following
+layout:
+
+- `checkpoints/` for saved policy and optimizer checkpoints.
+- `videos/` for rollout MP4s.
+- `plots/` for reward curves.
+- `metadata/` for the run manifest JSON files.
 
 
-## Optional environment variables
+## Hugging Face Upload
 
 Everything runs **fully offline** without these. Set them to enable the cloud bits:
 
 ```bash
-export HF_MODEL_REPO="your-username/anymal-d-ppo"   # enable checkpoint upload
+export HF_MODEL_REPO="your-username/anymal-d-ppo"   # enable Hub upload
 export HF_TOKEN="hf_..."                            # write token (or: hf auth login)
 export HF_PRIVATE=1                                 # 1=private repo (default), 0=public
 export TRACKIO_SPACE_ID="your-username/anymal-d-dash"  # host the dashboard on a Space
+```
+
+To train and upload the generated artifacts in one pass:
+
+```bash
+python anymal_d/RL_PPO_ANYMAL_D_SWEEP_OR_TRAIN_RENDERING.py train
+python anymal_d/RL_PPO_ANYMAL_D_SWEEP_OR_TRAIN_RENDERING.py render --num-videos 3
 ```
 
 View the local dashboard any time with:
