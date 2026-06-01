@@ -18,6 +18,7 @@ scripts are direct ports of the ANYmal C set, with two kinds of change only:
 ```
 anymal_d_ppo/
 ├── anymal_d/                                  # the scripts
+│   ├── hf_artifacts.py                            # shared Hub upload / metadata helper
 │   ├── RL_PPO_ANYMAL_D_SWEEP_OR_TRAIN.py          # MultivariateNormal trainer + sweep
 │   ├── RL_PPO_ANYMAL_D_SWEEP_OR_TRAIN_RENDERING.py# Normal/delta trainer + sweep + render
 │   └── RL_PPO_ANYMAL_D_VIDEO.py                   # render videos from a checkpoint
@@ -58,6 +59,11 @@ python anymal_d/RL_PPO_ANYMAL_D_VIDEO.py --num-videos 5
 Trainer **1** pairs with the video script because they share the same
 `MultivariateNormal` policy class. Trainer **2** renders its own videos via its
 `render` mode.
+
+The new shared helper [anymal_d/hf_artifacts.py](anymal_d/hf_artifacts.py)
+handles metadata generation and Hugging Face uploads for checkpoints, rollout
+videos, and plots, so the training scripts only need to pass the artifact paths
+and run metadata.
 
 When a run crosses the save threshold, the scripts write local artifacts under
 `pretrained_models/anymal_d/` and a matching metadata JSON file. If
